@@ -12,18 +12,24 @@ If the request is successful we will get a response with the following body:
 {
  "token": "QpwL5tke4Pnpja7X4"
 }
-
-
 */
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { userLogin } from "../actions/authAction"
+import { RootState } from "../store"
 
-import { createSlice } from "@reduxjs/toolkit"
-import axios from "axios"
+interface userState {
+  loading: boolean
+  userToken: string | null
+  userInfo: any
+  error: string | null
+  sucess: boolean
+}
 
-const initialState = {
+const initialState: userState = {
   loading: false,
-  error: null,
   userToken: null,
   userInfo: null,
+  error: null,
   sucess: false,
 }
 
@@ -31,5 +37,21 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {},
-  extraReducers: {},
+  extraReducers(builder) {
+    builder.addCase(userLogin.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(userLogin.fulfilled, (state, action) => {
+      state.loading = false
+      state.userToken = action.payload.token
+      state.sucess = true
+    })
+    builder.addCase(userLogin.rejected, (state, action: PayloadAction<any>) => {
+      state.loading = false
+      state.error = action.payload
+    })
+  },
 })
+
+export const selectUserToken = (state: RootState) => state.auth.userToken
+export const authReducer = authSlice.reducer

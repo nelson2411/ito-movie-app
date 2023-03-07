@@ -1,11 +1,17 @@
 import React from "react"
 import { useForm } from "react-hook-form"
+import { useDispatch, useSelector } from "react-redux"
+import { RootState } from "../../redux/store"
+import { authReducer } from "../../redux/slices/authSlice"
+import { userLogin } from "../../redux/actions/authAction"
 
 const LoginPage = () => {
+  const dispatch = useDispatch()
+  const { loading, error } = useSelector((state: RootState) => state.auth)
   const { register, handleSubmit } = useForm()
 
   const submitForm = (data: any) => {
-    console.log(data)
+    dispatch(userLogin(data))
   }
 
   return (
